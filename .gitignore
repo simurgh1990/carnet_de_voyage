@@ -32,3 +32,7 @@ backend/yarn-error.log*
 
 # Logs
 *.log
+
+# Node.JS
+node_modules
+.env

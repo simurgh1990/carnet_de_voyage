@@ -45,6 +45,10 @@ dependencies:
   # QR code scanner (optionnel)
   qr_code_scanner: ^1.0.1
 
+  #firebase pour l'authentification
+  firebase_core: ^2.8.0  # Vérifie la dernière version
+  firebase_auth: ^4.8.0   # Pour l'authentification
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

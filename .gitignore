@@ -1,0 +1,34 @@
+# Flutter specific
+.DS_Store
+.dart_tool/
+.build/
+.idea/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+.metadata
+
+# iOS build
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/engine/
+ios/Flutter/flutter_assets/
+ios/ServiceDefinitions.json
+ios/Pods/
+
+# Android build
+android/.gradle/
+android/.idea/
+android/key.properties
+
+# Node.js specific
+backend/node_modules/
+backend/npm-debug.log*
+backend/yarn-debug.log*
+backend/yarn-error.log*
+
+# VSCode
+.vscode/
+
+# Logs
+*.log

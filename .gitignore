@@ -36,3 +36,6 @@ backend/yarn-error.log*
 # Node.JS
 node_modules
 .env
+
+# FirebaseAdmin
+node_modules/firebase-admin/firebase-adminsdk.json

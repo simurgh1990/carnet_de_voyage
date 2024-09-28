@@ -2,16 +2,17 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class DatabaseHelper {
-  static final _databaseName = "voyages.db";
-  static final _databaseVersion = 1;
+  // Utilisation de 'const' au lieu de 'final' car ces variables sont des constantes
+  static const _databaseName = "voyages.db";
+  static const _databaseVersion = 1;
 
-  static final table = 'voyage';
+  static const table = 'voyage';
 
-  static final columnId = '_id';
-  static final columnName = 'name';
-  static final columnDescription = 'description';
-  static final columnStartDate = 'start_date';
-  static final columnEndDate = 'end_date';
+  static const columnId = '_id';
+  static const columnName = 'name';
+  static const columnDescription = 'description';
+  static const columnStartDate = 'start_date';
+  static const columnEndDate = 'end_date';
 
   static Database? _database;
 
@@ -23,7 +24,11 @@ class DatabaseHelper {
 
   _initDatabase() async {
     String path = join(await getDatabasesPath(), _databaseName);
-    return await openDatabase(path, version: _databaseVersion, onCreate: _onCreate);
+    return await openDatabase(
+      path,
+      version: _databaseVersion,
+      onCreate: _onCreate,
+    );
   }
 
   Future _onCreate(Database db, int version) async {
@@ -31,4 +36,42 @@ class DatabaseHelper {
           CREATE TABLE $table (
             $columnId INTEGER PRIMARY KEY,
             $columnName TEXT NOT NULL,
-            $columnDescription TEXT NOT NULL
+            $columnDescription TEXT NOT NULL,
+            $columnStartDate TEXT NOT NULL,
+            $columnEndDate TEXT NOT NULL
+          )
+          ''');
+  }
+
+  // Méthode pour insérer un nouveau voyage dans la base de données
+  Future<int?> insert(Map<String, dynamic> row) async {
+    Database? db = await database;
+    return await db?.insert(table, row);
+  }
+
+  // Méthode pour récupérer tous les voyages de la base de données
+  Future<List<Map<String, dynamic>>> queryAllRows() async {
+    Database? db = await database;
+    return await db?.query(table) ?? [];
+  }
+
+  // Méthode pour récupérer un voyage par ID
+  Future<Map<String, dynamic>?> queryRowById(int id) async {
+    Database? db = await database;
+    var result = await db?.query(table, where: '$columnId = ?', whereArgs: [id]);
+    return result?.isNotEmpty == true ? result?.first : null;
+  }
+
+  // Méthode pour mettre à jour un voyage existant
+  Future<int?> update(Map<String, dynamic> row) async {
+    Database? db = await database;
+    int id = row[columnId];
+    return await db?.update(table, row, where: '$columnId = ?', whereArgs: [id]);
+  }
+
+  // Méthode pour supprimer un voyage
+  Future<int?> delete(int id) async {
+    Database? db = await database;
+    return await db?.delete(table, where: '$columnId = ?', whereArgs: [id]);
+  }
+}

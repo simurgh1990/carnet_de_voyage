@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "156623633534",
+    "project_id": "carnet-de-voyage-20c9a",
+    "storage_bucket": "carnet-de-voyage-20c9a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:156623633534:android:950ab4d298ac3303062c2f",
+        "android_client_info": {
+          "package_name": "com.example.carnet_de_voyage"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAbhcbDqr-EAkRLk9MugY45wz9W7twdRD4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

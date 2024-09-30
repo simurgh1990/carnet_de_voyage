@@ -139,7 +139,7 @@ class LoginScreenState extends State<LoginScreen> {
             ElevatedButton.icon(
               onPressed: _signInWithGoogle, // Appel à la fonction de connexion via Google
               icon: Image.asset(
-                'frontend/assets/images/google_logo.png', // Chemin vers votre image
+                'assets/google_logo.png', // Chemin vers votre image
                 height: 24,
               ),
               label: const Text('Se connecter avec Google'),

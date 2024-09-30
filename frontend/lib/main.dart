@@ -31,7 +31,6 @@ void main() async {
     // Initialisation pour Android et iOS - cela utilisera les fichiers de configuration 
     await Firebase.initializeApp();
   }
-
   runApp(CarnetDeVoyageApp());
 }
 

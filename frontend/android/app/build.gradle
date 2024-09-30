@@ -7,8 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.carnet_de_voyage"
-    compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    compileSdkVersion 35 // Définissez explicitement la version de l'API utilisée 
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -16,31 +15,23 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
+        jvmTarget = "1.8"
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.example.carnet_de_voyage"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
-        versionCode = flutter.versionCode
-        versionName = flutter.versionName
+        minSdkVersion 23 // Définissez explicitement la version minimale de l'API
+        targetSdkVersion 33 // Définissez explicitement la version cible de l'API (33 est un exemple)
+        versionCode flutter.versionCode
+        versionName flutter.versionName
 
-        // Configuration requise par le SDK Facebook
         manifestPlaceholders = [
-            appName              : "Carnet de Voyage",
-            facebookAppId        : "YOUR_FACEBOOK_APP_ID", // Remplace par ton Facebook App ID
-            facebookClientToken  : "YOUR_FACEBOOK_CLIENT_TOKEN" // Optionnel
+            applicationName: "CarnetDeVoyageApp"
         ]
     }
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.debug
         }
     }
@@ -51,9 +42,8 @@ flutter {
 }
 
 dependencies {
-    // Dépendance Google Play Services pour Google Auth
     implementation 'com.google.android.gms:play-services-auth:20.4.1'
-
-    // Dépendance pour le SDK Facebook
-    implementation 'com.facebook.android:facebook-android-sdk:16.0.1'
 }
+
+// Ajoutez cette ligne à la fin du fichier
+apply plugin: 'com.google.gms.google-services'

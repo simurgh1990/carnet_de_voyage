@@ -2,13 +2,13 @@
 .DS_Store
 .dart_tool/
 .build/
-.idea/
 .packages
 .flutter-plugins
 .flutter-plugins-dependencies
 .metadata
 *.iml
 *.hprof
+pubspec.lock
 
 # iOS build
 ios/Flutter/Flutter.framework
@@ -17,31 +17,52 @@ ios/Flutter/engine/
 ios/Flutter/flutter_assets/
 ios/ServiceDefinitions.json
 ios/Pods/
+ios/.symlinks/
+ios/Flutter/.last_build_id
+**/ios/Flutter/App.framework
+**/ios/Flutter/Flutter.podspec.json
+**/ios/Flutter/Flutter.framework
 
 # Android build
 android/.gradle/
 android/.idea/
 android/key.properties
+android/local.properties
+android/app/google-services.json
+**/build/
+android/app/build/
+**/*.keystore
+
+# Exclude all build directories
+build/
+*/build/
 
 # Node.js specific
 backend/node_modules/
 backend/npm-debug.log*
 backend/yarn-debug.log*
 backend/yarn-error.log*
+backend/.yarn-integrity
 
 # VSCode
 .vscode/
 
+# Firebase Admin SDK file
+backend/firebaseAdmin/firebase-adminsdk-carnet_de_voyage.json
+
 # Logs
 *.log
 
-# Node.JS
-node_modules
+# Environment variables
 .env
-
-# FirebaseAdmin
-backend/firebaseAdmin/firebase-adminsdk-carnet_de_voyage.json
+**/*.env
 
 # Exclude generated files
 **/PROJECT@v11_mod*
 **/TARGET@v11_hash*
+
+# Miscellaneous
+**/*.swp
+*.tmp
+*.bak
+*.old

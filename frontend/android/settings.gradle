@@ -1,3 +1,4 @@
+// Placez le bloc pluginManagement en premier
 pluginManagement {
     def flutterSdkPath = {
         def properties = new Properties()
@@ -16,10 +17,59 @@ pluginManagement {
     }
 }
 
+// Placez ensuite le bloc buildscript
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.codehaus.groovy:groovy-all:3.0.22' // Assure la compatibilité avec les fonctionnalités Groovy
+    }
+}
+
+// Le bloc plugins doit venir ensuite
 plugins {
     id "dev.flutter.flutter-plugin-loader" version "1.0.0"
     id "com.android.application" version "8.1.0" apply false
     id "org.jetbrains.kotlin.android" version "1.8.22" apply false
 }
 
-include ":app"
+include ':app'
+
+// Définissez le chemin racine du projet Flutter
+def flutterProjectRoot = rootProject.projectDir.parentFile.toPath()
+
+// Utiliser une méthode Groovy pour lire le fichier ligne par ligne
+def parseFlutterPluginFile = { pluginFile ->
+    if (pluginFile.exists()) {
+        try {
+            pluginFile.eachLine { line ->
+                // Nous devons ignorer les commentaires ou les lignes non pertinentes
+                if (!line.trim().startsWith("#") && line.contains(":")) {
+                    def parts = line.split("=")
+                    if (parts.length == 2) {
+                        def pluginName = parts[0].trim()
+                        def pluginPath = parts[1].trim()
+                        if (pluginName && pluginPath) {
+                            include ":$pluginName"
+                            project(":$pluginName").projectDir = new File(pluginPath)
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            println "Erreur lors de la lecture du fichier ${pluginFile}: ${e.message}"
+        }
+    } else {
+        println "Le fichier ${pluginFile} n'existe pas"
+    }
+}
+
+// Définir les chemins des fichiers .flutter-plugins et .flutter-plugins-dependencies
+def flutterPluginsFile = new File(flutterProjectRoot.toFile(), ".flutter-plugins")
+def flutterPluginsDependenciesFile = new File(flutterProjectRoot.toFile(), ".flutter-plugins-dependencies")
+
+// Utilisez la fonction parseFlutterPluginFile pour lire le fichier .flutter-plugins-dependencies
+parseFlutterPluginFile(flutterPluginsFile)
+parseFlutterPluginFile(flutterPluginsDependenciesFile)

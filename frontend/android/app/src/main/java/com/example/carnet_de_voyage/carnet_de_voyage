@@ -4,12 +4,16 @@ import io.flutter.app.FlutterApplication;
 import io.flutter.plugins.GeneratedPluginRegistrant;
 import android.content.Context;
 import androidx.multidex.MultiDex;
-import android.app.Application;
+import com.google.firebase.FirebaseApp;
 
 public class CarnetDeVoyageApp extends FlutterApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+        // Initialisation de Firebase
+        FirebaseApp.initializeApp(this);
+        
+        // Enregistrement des plugins
         GeneratedPluginRegistrant.registerWith(this);
     }
 

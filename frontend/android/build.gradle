@@ -6,6 +6,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:8.1.0'
         classpath 'com.google.gms:google-services:4.3.14'
+        classpath 'org.codehaus.groovy:groovy-json:3.0.22'
     }
 }
 
@@ -27,3 +28,6 @@ subprojects {
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
+
+// Ajout de l'application du plugin Google Services
+apply plugin: 'com.google.gms.google-services'

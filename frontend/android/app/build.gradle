@@ -3,11 +3,13 @@ plugins {
     id "kotlin-android"
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
+    // Ajoutez ce plugin pour la configuration de Google Services
+    id "com.google.gms.google-services"
 }
 
 android {
     namespace = "com.example.carnet_de_voyage"
-    compileSdkVersion 35 // Définissez explicitement la version de l'API utilisée 
+    compileSdkVersion 34 // Assurez-vous d'avoir téléchargé le SDK 34
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -19,10 +21,10 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.carnet_de_voyage"
-        minSdkVersion 23 // Définissez explicitement la version minimale de l'API
-        targetSdkVersion 33 // Définissez explicitement la version cible de l'API (33 est un exemple)
-        versionCode flutter.versionCode
+        applicationId "com.example.carnet_de_voyage"
+        minSdkVersion 23 // Version minimale de l'API (vous pouvez adapter selon vos besoins)
+        targetSdkVersion 34 // API cible
+        versionCode flutter.versionCode.toInteger() // Ajoutez .toInteger() pour s'assurer que la valeur est bien un entier
         versionName flutter.versionName
 
         manifestPlaceholders = [
@@ -32,7 +34,19 @@ android {
 
     buildTypes {
         release {
-            signingConfig = signingConfigs.debug
+            signingConfig = signingConfigs.debug // Mettez à jour ce paramètre si vous utilisez une signature personnalisée pour les builds de production
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'src/main/AndroidManifest.xml'
+            java.srcDirs = ['src/main/java']
+            res.srcDirs = ['src/main/res']
+            assets.srcDirs = ['src/main/assets']
         }
     }
 }
@@ -43,7 +57,12 @@ flutter {
 
 dependencies {
     implementation 'com.google.android.gms:play-services-auth:20.4.1'
+    // Ajoutez toutes les dépendances Firebase nécessaires
+    implementation platform('com.google.firebase:firebase-bom:32.2.0') // Ajoutez le BOM Firebase pour gérer les versions
+    implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.google.firebase:firebase-firestore'
+    implementation 'com.google.firebase:firebase-storage'
 }
 
-// Ajoutez cette ligne à la fin du fichier
+// Ce plugin Google Services doit être appliqué automatiquement si vous utilisez "com.google.gms.google-services" dans les plugins
 apply plugin: 'com.google.gms.google-services'

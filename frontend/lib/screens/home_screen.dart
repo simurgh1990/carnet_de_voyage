@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'trip/trip_screen.dart';
+import 'package:carnet_de_voyage/screens/trip/trip_screen.dart';
 import 'wallet_screen.dart';
 
 class HomeScreen extends StatefulWidget {

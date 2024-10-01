@@ -1,0 +1,20 @@
+package com.example.carnet_de_voyage;
+
+import io.flutter.app.FlutterApplication;
+import io.flutter.plugins.GeneratedPluginRegistrant;
+import android.content.Context;
+import androidx.multidex.MultiDex;
+
+public class CarnetDeVoyageApp extends FlutterApplication {
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        GeneratedPluginRegistrant.registerWith(this);
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
+    }
+}

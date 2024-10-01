@@ -38,4 +38,7 @@ node_modules
 .env
 
 # FirebaseAdmin
-node_modules/firebase-admin/firebase-adminsdk.json
+backend/firebaseAdmin/firebase-adminsdk-carnet_de_voyage.json
+
+#JAVA
+*.hprof

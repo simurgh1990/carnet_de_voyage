@@ -1,52 +1,42 @@
+// frontend/lib/services/firestore_service.dart
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:go_router/go_router.dart';
-import 'screens/auth/login.dart';
-import 'screens/auth/register.dart';
-import 'screens/home_screen.dart';
-import 'screens/trip/trip_screen.dart';
-import 'stream_listenable.dart'; // Importe la classe StreamListenable
+import 'package:logger/logger.dart';
 
-final GoRouter appRouter = GoRouter(
-  initialLocation: FirebaseAuth.instance.currentUser == null ? '/login' : '/', // Définit la route initiale
-  routes: [
-    GoRoute(
-      path: '/',
-      builder: (context, state) => const HomeScreen(),
-    ),
-    GoRoute(
-      path: '/login',
-      builder: (context, state) => const LoginScreen(),
-    ),
-    GoRoute(
-      path: '/register',
-      builder: (context, state) => const RegisterScreen(),
-    ),
-    GoRoute(
-      path: '/trip/:tripId',
-      builder: (context, state) {
-        final tripId = state.pathParameters['tripId']!;
-        return TripDetailScreen(tripId: tripId);
-      },
-    ),
-  ],
-  redirect: (context, state) {
-    final isLoggedIn = FirebaseAuth.instance.currentUser != null;
-    final currentLocation = state.uri.toString(); // Utilise `state.uri.toString()` à la place de `state.location`
-    
-    final goingToLogin = currentLocation == '/login';
-    final goingToRegister = currentLocation == '/register';
+class FirestoreService {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final Logger _logger = Logger(); // Initialise le logger
 
-    // Si l'utilisateur est connecté et tente d'aller à /login ou /register, on le redirige vers /
-    if (isLoggedIn && (goingToLogin || goingToRegister)) {
-      return '/';
+  Future<void> addUserData(String name) async {
+    User? user = _auth.currentUser;
+
+    if (user != null) {
+      try {
+        await _firestore.collection('users').doc(user.uid).set({
+          'name': name,
+          'email': user.email,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+        _logger.i('User data added to Firestore'); // Utilise le logger pour les informations
+      } catch (e) {
+        _logger.e('Error adding user data: $e'); // Utilise le logger pour les erreurs
+      }
     }
+  }
 
-    // Si l'utilisateur n'est pas connecté et tente d'aller ailleurs que /login ou /register, on le redirige vers /login
-    if (!isLoggedIn && currentLocation != '/login' && currentLocation != '/register') {
-      return '/login';
+  Future<DocumentSnapshot?> getUserData() async {
+    User? user = _auth.currentUser;
+
+    if (user != null) {
+      try {
+        DocumentSnapshot userData = await _firestore.collection('users').doc(user.uid).get();
+        return userData;
+      } catch (e) {
+        _logger.e('Error retrieving user data: $e'); // Utilise le logger pour les erreurs
+        return null;
+      }
     }
-
-    return null; // Pas de redirection nécessaire
-  },
-  refreshListenable: StreamListenable(FirebaseAuth.instance.authStateChanges()), // Utilise StreamListenable
-);
+    return null;
+  }
+}

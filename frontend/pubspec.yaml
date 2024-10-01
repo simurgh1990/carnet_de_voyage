@@ -6,12 +6,13 @@ version: 1.0.0+1
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.5.0"
 
 dependencies:
   flutter:
     sdk: flutter
 
-  # go_router pour gestion des routes
+  #go_router pour gestion des routes
   go_router: ^14.2.7
 
   # Dépendances Firebase (versions compatibles)
@@ -21,8 +22,10 @@ dependencies:
   firebase_auth_web: ^5.13.2
   cloud_firestore: ^5.4.2
   firebase_storage: ^12.3.1
+  flutter_facebook_auth: ^7.1.0
   google_sign_in: ^6.0.0
   logger: ^2.4.0
+ 
 
   # Cupertino Icons
   cupertino_icons: ^1.0.8
@@ -35,7 +38,10 @@ dependencies:
   # Google Maps pour l'affichage des cartes
   google_maps_flutter: ^2.2.5
 
-  # interopérabilités 
+  # QR code scanner (optionnel)
+  qr_code_scanner: ^1.0.1
+
+  #interopérabilités 
   js: ^0.6.7
 
 dev_dependencies:
@@ -46,7 +52,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
-  # Ajout de l'image Google logo
-  assets:
-    - assets/google_logo.png

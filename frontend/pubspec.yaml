@@ -38,8 +38,6 @@ dependencies:
   # Google Maps pour l'affichage des cartes
   google_maps_flutter: ^2.2.5
 
-  # QR code scanner (optionnel)
-  qr_code_scanner: ^1.0.1
 
   #interopérabilités 
   js: ^0.6.7

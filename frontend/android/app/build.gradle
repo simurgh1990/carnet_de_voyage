@@ -58,6 +58,7 @@ flutter {
 
 dependencies {
     implementation 'com.google.android.gms:play-services-auth:20.4.1'
+    implementation 'androidx.multidex:multidex:2.0.1'
     // Ajoutez toutes les dépendances Firebase nécessaires
     implementation platform('com.google.firebase:firebase-bom:32.2.0')
     implementation 'com.google.firebase:firebase-auth'
@@ -65,6 +66,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage'
     implementation project(':firebase_core')
     implementation project(':cloud_firestore')
+    
 }
 
 // Ce plugin Google Services doit être appliqué automatiquement si vous utilisez "com.google.gms.google-services" dans les plugins

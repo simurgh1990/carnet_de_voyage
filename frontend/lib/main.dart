@@ -8,7 +8,7 @@ import 'package:go_router/go_router.dart';
 // Import des pages
 import 'screens/home_screen.dart';
 import 'screens/trip/trip_screen.dart';
-import 'screens/wallet_screen.dart';
+import 'screens/profil_screen.dart';
 import 'screens/auth/login.dart';
 import 'screens/auth/register.dart';
 
@@ -55,8 +55,8 @@ class CarnetDeVoyageApp extends StatelessWidget {
         },
       ),
       GoRoute(
-        path: '/wallet',
-        builder: (context, state) => const WalletScreen(),
+        path: '/profil',
+        builder: (context, state) => const ProfilScreen(),
       ),
       GoRoute(
         path: '/login',

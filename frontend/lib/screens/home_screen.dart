@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:carnet_de_voyage/screens/trip/trip_screen.dart';
-import 'wallet_screen.dart';
+import 'profil_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  HomeScreenState createState() => HomeScreenState(); // Supprimer l'underscore ici
+  HomeScreenState createState() => HomeScreenState();
 }
 
-class HomeScreenState extends State<HomeScreen> { // Supprimer l'underscore ici
+class HomeScreenState extends State<HomeScreen> { 
   int _selectedIndex = 0;
 
   static const List<Widget> _pages = <Widget>[
     Center(child: Text('Page d\'accueil')),
-    TripDetailScreen(tripId: '123'), // Exemple d'écran de détail de voyage
-    WalletScreen(), // Exemple d'écran de portefeuille
+    TripDetailScreen(tripId: '123'), 
+    ProfilScreen(), 
   ];
 
   void _onItemTapped(int index) {
@@ -42,8 +42,8 @@ class HomeScreenState extends State<HomeScreen> { // Supprimer l'underscore ici
             label: 'Carnet',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.account_balance_wallet),
-            label: 'Portefeuille',
+            icon: Icon(Icons.person_2_rounded),
+            label: 'Profil',
           ),
         ],
         currentIndex: _selectedIndex,

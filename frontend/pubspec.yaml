@@ -21,8 +21,8 @@ dependencies:
   firebase_auth_platform_interface: ^7.4.7
   firebase_auth_web: ^5.13.2
   cloud_firestore: ^5.4.4
-  firebase_storage: ^12.3.1
-  flutter_facebook_auth: ^7.1.0
+  firebase_storage: ^12.3.2
+  flutter_secure_storage: ^9.2.2
   google_sign_in: ^6.0.0
   logger: ^2.4.0
   image_picker: ^1.1.2
@@ -32,12 +32,12 @@ dependencies:
   cupertino_icons: ^1.0.8
 
   # SQLite pour la gestion des données locales
-  sqflite: ^2.2.8+1
+  sqflite: ^2.2.0
   path_provider: ^2.0.14
   path: ^1.8.3 
 
   # Google Maps pour l'affichage des cartes
-  google_maps_flutter: ^2.2.5
+  google_maps_flutter: ^2.2.0
 
 
   #interopérabilités 

@@ -12,7 +12,13 @@ function generateToken(user) {
 
 // Middleware pour vérifier le token JWT
 function authMiddleware(req, res, next) {
-  const token = req.headers['authorization'];
+  const authHeader = req.headers['authorization'];
+  if (!authHeader) {
+    return res.status(403).send('Token is required');
+  }
+
+  const token = authHeader.split(' ')[1]; // Séparer "Bearer" du token
+
   if (!token) {
     return res.status(403).send('Token is required');
   }

@@ -1,4 +1,4 @@
-const admin = require('../firebaseConfig');
+const admin = require('../config/firebaseConfig');
 const { generateToken } = require('../middlewares/auth');
 
 // Connexion de l'utilisateur

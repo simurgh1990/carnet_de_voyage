@@ -6,6 +6,10 @@ const dotenv = require('dotenv');
 // Charger les variables d'environnement
 dotenv.config();
 
+// Importer Firebase Admin et Firestore depuis firebaseConfig.js
+const { db } = require('./config/firebaseConfig');
+
+// Importe express
 const app = express();
 
 // Middlewares
@@ -16,6 +20,10 @@ app.use(bodyParser.json()); // Parser les requêtes JSON
 app.get('/', (req, res) => {
   res.send('Carnet de voyage API est en ligne !');
 });
+
+// Import et utilisation des routes d'authentification
+const authRoutes = require('./routes/authRoutes');
+app.use('/auth', authRoutes);  // Ajout de la route pour l'authentification
 
 // Import et utilisation des routes centralisées
 const routes = require('./routes'); // Importe le fichier index.js du dossier routes

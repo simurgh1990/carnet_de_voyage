@@ -3,7 +3,7 @@
 const express = require('express');
 const router = express.Router();
 const tripController = require('../controllers/tripController');
-const authMiddleware = require('../middlewares/authMiddleware');
+const { authMiddleware } = require('../middlewares/auth');
 
 // Ajouter un nouveau carnet de voyage
 router.post('/', authMiddleware, tripController.createTrip);

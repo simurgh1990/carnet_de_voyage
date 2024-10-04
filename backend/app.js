@@ -22,7 +22,7 @@ const routes = require('./routes'); // Importe le fichier index.js du dossier ro
 app.use('/api', routes);            // Utilise les routes avec le préfixe /api
 
 // Démarrer le serveur
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`Serveur démarré sur le port ${PORT}`);
 });

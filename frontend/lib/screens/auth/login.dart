@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
-import 'package:logger/logger.dart'; // Importe le package logger
-import 'package:google_sign_in/google_sign_in.dart'; // Importe Google Sign-In
+import 'package:logger/logger.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';  // Pour utiliser jsonEncode
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -17,12 +19,43 @@ class LoginScreenState extends State<LoginScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final Logger _logger = Logger(); // Initialise le logger
 
+  // Méthode pour envoyer le idToken au backend
+  Future<void> _sendIdTokenToBackend(String idToken) async {
+    final url = Uri.parse('http://localhost:3000/auth/login'); // URL de ton backend
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',  // JSON content type
+      },
+      body: jsonEncode({
+        'idToken': idToken,  // Envoyer le idToken dans le corps de la requête
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      // Si le token est envoyé avec succès
+      _logger.i(idToken);('Token envoyé au backend avec succès');
+    } else {
+      // Erreur lors de l'envoi du token
+      _logger.e('Erreur: ${response.body}');
+    }
+  }
+
+  // Méthode pour la connexion via email
   Future<void> _signIn() async {
     try {
       await _auth.signInWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
+
+      User? user = _auth.currentUser;
+
+      if (user != null) {
+        String idToken = await user.getIdToken() ?? ''; // Assure que tu as une chaîne vide si le token est nul
+        _logger.i(idToken);  // Ce token devra être envoyé au backend
+        await _sendIdTokenToBackend(idToken); // Envoyer le token au backend
+      }
 
       if (!mounted) return;
       context.go('/');
@@ -87,6 +120,14 @@ class LoginScreenState extends State<LoginScreen> {
 
       await _auth.signInWithCredential(credential);
 
+      User? user = _auth.currentUser;
+
+      if (user != null) {
+        String idToken = await user.getIdToken() ?? ''; // Assure que tu as une chaîne vide si le token est nul
+        _logger.i(idToken);  // Ce token devra être envoyé au backend
+        await _sendIdTokenToBackend(idToken); // Envoyer le token au backend
+      }
+
       if (!mounted) return;
       context.go('/');
     } on FirebaseAuthException catch (e) {
@@ -139,7 +180,7 @@ class LoginScreenState extends State<LoginScreen> {
             ElevatedButton.icon(
               onPressed: _signInWithGoogle, // Appel à la fonction de connexion via Google
               icon: Image.asset(
-                'assets/google_logo.png', // Chemin vers votre image
+                'assets/google_logo.png', // Chemin vers ton image
                 height: 24,
               ),
               label: const Text('Se connecter avec Google'),

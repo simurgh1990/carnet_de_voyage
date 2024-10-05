@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert'; // Pour l'encodage JSON
 import 'package:logger/logger.dart'; // Importer le package logger
+import 'package:firebase_auth/firebase_auth.dart';
 
 // Initialise un logger
 var logger = Logger();
 
 class CreateTripPage extends StatefulWidget {
-  const CreateTripPage({super.key}); // Utilisation du super parameter
+  const CreateTripPage({super.key});
 
   @override
   CreateTripPageState createState() => CreateTripPageState();
@@ -41,10 +42,18 @@ class CreateTripPageState extends State<CreateTripPage> {
 
   // Méthode pour envoyer les données au backend
   Future<void> createTrip(String title, String description, DateTime startDate, DateTime endDate) async {
-    final String apiUrl = 'https://ton-api-url/api/trips';
-    final token = "TonTokenJWT"; // Remplace avec ton vrai token JWT
+    final String apiUrl = 'http://localhost:5001/api/trips';
+    
+    // Récupérer le token JWT de l'utilisateur connecté
+    final token = await FirebaseAuth.instance.currentUser?.getIdToken();
+    
+    if (token == null) {
+      logger.e("Erreur : Impossible de récupérer le token JWT.");
+      throw Exception("Utilisateur non authentifié");
+    }
 
     try {
+      logger.i('Envoi de la requête pour créer un voyage...');
       final response = await http.post(
         Uri.parse(apiUrl),
         headers: {
@@ -59,15 +68,19 @@ class CreateTripPageState extends State<CreateTripPage> {
         }),
       );
 
+      // Logs pour afficher la réponse du backend
+      logger.i('Réponse reçue : ${response.statusCode}');
+      logger.d('Réponse du serveur : ${response.body}');
+
       if (response.statusCode == 200 || response.statusCode == 201) {
-        logger.i('Carnet créé avec succès'); // Remplace print par logger
-        return; // Fin de la méthode en cas de succès
+        logger.i('Carnet créé avec succès');
+        return;
       } else {
-        logger.e('Erreur lors de la création du carnet : ${response.statusCode}'); // Remplace print par logger
+        logger.e('Erreur lors de la création du carnet : ${response.statusCode}');
         throw Exception('Erreur lors de la création du carnet');
       }
     } catch (e) {
-      logger.e('Erreur : $e'); // Remplace print par logger
+      logger.e('Erreur : $e');
       rethrow; // Lancer à nouveau l'exception pour qu'elle soit captée par le catch
     }
   }
@@ -75,8 +88,17 @@ class CreateTripPageState extends State<CreateTripPage> {
   // Méthode pour gérer la création du carnet
   Future<void> _handleSubmit() async {
     if (_formKey.currentState!.validate()) {
+      if (startDate == null || endDate == null) {
+        // Si les dates ne sont pas définies, afficher une erreur
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Veuillez sélectionner une date de début et de fin')),
+        );
+        return;
+      }
+
       _formKey.currentState!.save();
       try {
+        logger.i('Soumission du formulaire...');
         await createTrip(title, description, startDate!, endDate!);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -85,6 +107,7 @@ class CreateTripPageState extends State<CreateTripPage> {
         }
       } catch (error) {
         if (mounted) {
+          logger.e('Erreur lors de la création du carnet : $error');
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Erreur lors de la création du carnet')),
           );
@@ -141,9 +164,8 @@ class CreateTripPageState extends State<CreateTripPage> {
               if (endDate != null)
                 Text('Date de fin sélectionnée : ${endDate.toString()}'),
               SizedBox(height: 20),
-              // Bouton de soumission avec le code pour créer le carnet
               ElevatedButton(
-                onPressed: _handleSubmit, // Appel de la méthode asynchrone
+                onPressed: _handleSubmit,
                 child: Text('Créer le carnet'),
               ),
             ],

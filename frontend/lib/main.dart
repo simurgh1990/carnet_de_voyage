@@ -14,9 +14,8 @@ import 'screens/auth/register.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Configuration de Firebase en fonction de la plateforme
+  // Initialisation de Firebase
   if (kIsWeb) {
-    // Initialisation spécifique pour le Web avec les bonnes options
     await Firebase.initializeApp(
       options: const FirebaseOptions(
         apiKey: "AIzaSyDWBQ0DwZxpzeSR9ZwM-InNb6dhn3E4xNo",
@@ -24,15 +23,14 @@ void main() async {
         projectId: "carnet-de-voyage-20c9a",
         storageBucket: "carnet-de-voyage-20c9a.appspot.com",
         messagingSenderId: "156623633534",
-        appId: "1:156623633534:web:2c41d045c952e12f062c2f", // App ID pour le Web
+        appId: "1:156623633534:web:2c41d045c952e12f062c2f",
       ),
     );
   } else {
-    // Initialisation pour Android et iOS - cela utilisera les fichiers de configuration natifs
     await Firebase.initializeApp();
   }
 
-  runApp(CarnetDeVoyageApp());
+  runApp(const CarnetDeVoyageApp());
 }
 
 class CarnetDeVoyageApp extends StatelessWidget {
@@ -40,16 +38,26 @@ class CarnetDeVoyageApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<User?>(
-      future: FirebaseAuth.instance.authStateChanges().first,
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
+        // Pendant la vérification de l'état de connexion, afficher un loader
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator(); // Afficher un indicateur de chargement
+          return const MaterialApp(
+            home: Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          );
         }
 
-        // Configuration de go_router après la vérification de l'authentification
+        final bool isLoggedIn = snapshot.hasData;
+
+        // Configuration de GoRouter
         final GoRouter router = GoRouter(
-          initialLocation: snapshot.hasData ? '/' : '/login', // Définir la route initiale
+          // Si l'utilisateur est connecté, il est redirigé vers la page d'accueil. Sinon, vers la page de login.
+          initialLocation: isLoggedIn ? '/' : '/login',
           routes: [
             GoRoute(
               path: '/',
@@ -76,15 +84,14 @@ class CarnetDeVoyageApp extends StatelessWidget {
             ),
           ],
           redirect: (context, state) {
-            final isLoggedIn = FirebaseAuth.instance.currentUser != null;
-             final currentLocation = state.uri.toString(); // Utilise `state.uri.toString()` à la place de `state.location`
+            final currentLocation = state.uri.toString();
 
-            // Si l'utilisateur est connecté et essaie d'aller sur /login ou /register, redirige vers /
+            // Si l'utilisateur est connecté et essaie d'aller sur /login ou /register, redirige-le vers la page d'accueil
             if (isLoggedIn && (currentLocation == '/login' || currentLocation == '/register')) {
               return '/';
             }
 
-            // Si l'utilisateur n'est pas connecté et essaie d'accéder à d'autres pages que /login ou /register, redirige vers /login
+            // Si l'utilisateur n'est pas connecté et tente d'accéder à une autre page que /login ou /register, redirige-le vers /login
             if (!isLoggedIn && currentLocation != '/login' && currentLocation != '/register') {
               return '/login';
             }
@@ -94,6 +101,7 @@ class CarnetDeVoyageApp extends StatelessWidget {
           refreshListenable: GoRouterRefreshStream(FirebaseAuth.instance.authStateChanges()),
         );
 
+        // Retourne MaterialApp avec le router
         return MaterialApp.router(
           title: 'Carnet de Voyage',
           debugShowCheckedModeBanner: false,
@@ -107,7 +115,7 @@ class CarnetDeVoyageApp extends StatelessWidget {
   }
 }
 
-// Classe pour écouter les changements d'état d'authentification et informer GoRouter
+// Classe pour rafraîchir GoRouter à chaque changement d'état d'authentification
 class GoRouterRefreshStream extends ChangeNotifier {
   GoRouterRefreshStream(Stream<dynamic> stream) {
     notifyListeners(); // Notification initiale

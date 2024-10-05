@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:go_router/go_router.dart';
 import 'package:carnet_de_voyage/screens/trip/trip_screen.dart';
 import 'package:carnet_de_voyage/screens/trip/add_trip_screen.dart'; // Importe la page de création de carnet
 import 'profil_screen.dart';
@@ -10,7 +12,7 @@ class HomeScreen extends StatefulWidget {
   HomeScreenState createState() => HomeScreenState();
 }
 
-class HomeScreenState extends State<HomeScreen> { 
+class HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
   // Ajout d'un bouton dans la page d'accueil pour créer un nouveau carnet
@@ -38,6 +40,15 @@ class HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  // Fonction pour déconnecter l'utilisateur et rediriger vers la page de login
+  void _signOut(BuildContext context) {
+    // Redirige immédiatement vers la page de login
+    GoRouter.of(context).go('/login');
+
+    // Puis déconnecte l'utilisateur de Firebase
+    FirebaseAuth.instance.signOut();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,10 +61,14 @@ class HomeScreenState extends State<HomeScreen> {
               // Naviguer vers la page de création de carnet de voyage
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => CreateTripPage()),
+                MaterialPageRoute(builder: (context) => const CreateTripPage()),
               );
             },
-          )
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout), // Icône de déconnexion
+            onPressed: () => _signOut(context), // Appelle la fonction de déconnexion
+          ),
         ],
       ),
       body: _pages[_selectedIndex],

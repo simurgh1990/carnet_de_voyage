@@ -12,8 +12,14 @@ const { db } = require('./config/firebaseConfig');
 // Importe express
 const app = express();
 
-// Middlewares
-app.use(cors()); // Autoriser les requêtes cross-origin
+// Configuration CORS avec des origines spécifiques
+const corsOptions = {
+  origin: ['http://localhost:5001', 'https://carnet-de-voyage-20c9a.firebaseapp.com'], // Origines autorisées
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Méthodes autorisées
+  allowedHeaders: ['Content-Type', 'Authorization'], // Headers autorisés
+};
+
+app.use(cors(corsOptions)); // Appliquer la configuration CORS
 app.use(bodyParser.json()); // Parser les requêtes JSON
 
 // Route de test pour vérifier si l'API fonctionne

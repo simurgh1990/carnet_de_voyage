@@ -4,6 +4,7 @@ const serviceAccount = require('../firebaseAdmin/firebase-adminsdk-carnet_de_voy
 // Initialisation de Firebase Admin SDK
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://carnet-de-voyage-20c9a.firebaseio.com"
 });
 
 // Initialisation de Firestore

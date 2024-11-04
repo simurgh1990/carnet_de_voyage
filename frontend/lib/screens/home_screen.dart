@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
-import 'package:carnet_de_voyage/screens/trip/trip_screen.dart';
-import 'package:carnet_de_voyage/screens/trip/add_trip_screen.dart'; // Importe la page de création de carnet
+import 'package:carnet_de_voyage/screens/trip/add_trip_screen.dart';
 import 'profil_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -15,23 +14,12 @@ class HomeScreen extends StatefulWidget {
 class HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
-  // Ajout d'un bouton dans la page d'accueil pour créer un nouveau carnet
+  // Liste des pages pour le bottom navigation
   static const List<Widget> _pages = <Widget>[
-    Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('Bienvenue dans votre Carnet de Voyage'),
-          SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: null, // Placeholder pour un autre bouton
-            child: Text('Autre fonctionnalité'),
-          ),
-        ],
-      ),
-    ),
-    TripDetailScreen(tripId: '123'), 
-    ProfilScreen(), 
+    HomePageContent(),
+    Center(child: Text("Carte")), // Placeholder for Map Screen
+    Center(child: Text("Checklist")), // Placeholder for Checklist Screen
+    ProfilScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -42,10 +30,7 @@ class HomeScreenState extends State<HomeScreen> {
 
   // Fonction pour déconnecter l'utilisateur et rediriger vers la page de login
   void _signOut(BuildContext context) {
-    // Redirige immédiatement vers la page de login
     GoRouter.of(context).go('/login');
-
-    // Puis déconnecte l'utilisateur de Firebase
     FirebaseAuth.instance.signOut();
   }
 
@@ -56,9 +41,8 @@ class HomeScreenState extends State<HomeScreen> {
         title: const Text('Carnet de Voyage'),
         actions: [
           IconButton(
-            icon: Icon(Icons.add),
+            icon: const Icon(Icons.add),
             onPressed: () {
-              // Naviguer vers la page de création de carnet de voyage
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const CreateTripPage()),
@@ -66,30 +50,113 @@ class HomeScreenState extends State<HomeScreen> {
             },
           ),
           IconButton(
-            icon: const Icon(Icons.logout), // Icône de déconnexion
-            onPressed: () => _signOut(context), // Appelle la fonction de déconnexion
+            icon: const Icon(Icons.logout),
+            onPressed: () => _signOut(context),
           ),
         ],
       ),
-      body: _pages[_selectedIndex],
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment(0.71, -0.71),
+            end: Alignment(-0.71, 0.71),
+            colors: [Color(0xFF4CAF50), Color(0xFF2196F3)],
+          ),
+        ),
+        child: Center(
+          child: _pages[_selectedIndex],
+        ),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.home_filled),
             label: 'Accueil',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.book),
-            label: 'Carnet',
+            icon: Icon(Icons.map_outlined),
+            label: 'Carte',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_2_rounded),
+            icon: Icon(Icons.check_box),
+            label: 'Checklist',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle_outlined),
             label: 'Profil',
           ),
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
+        selectedItemColor: Color(0xFF2196F3), // Couleur de l'icône sélectionnée
+        unselectedItemColor: Colors.grey, // Couleur des icônes non sélectionnées
+        type: BottomNavigationBarType.fixed, // Garde tous les items visibles
       ),
+    );
+  }
+}
+
+// Contenu de la page d'accueil
+class HomePageContent extends StatelessWidget {
+  const HomePageContent({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Image.asset(
+          'assets/logo_nomadnotes.png',
+          width: 200,
+          height: 160,
+        ),
+        const SizedBox(height: 20),
+        Text(
+          'Bienvenue dans votre Carnet de Voyage',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        const SizedBox(height: 20),
+        ElevatedButton(
+          onPressed: () {
+            // Placeholder pour une future fonctionnalité
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.white,
+            minimumSize: const Size(200, 45),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5),
+            ),
+          ),
+          child: const Text(
+            'Autre fonctionnalité',
+            style: TextStyle(color: Color(0xFF2196F3)),
+          ),
+        ),
+        const SizedBox(height: 20),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const CreateTripPage()),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Color(0xFF4CAF50),
+            minimumSize: const Size(200, 45),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5),
+            ),
+          ),
+          child: const Text(
+            'Créer un Nouveau Carnet',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -100,7 +100,7 @@ class CreateTripPageState extends State<CreateTripPage> {
       try {
         logger.i('Soumission du formulaire...');
         await createTrip(title, description, startDate!, endDate!);
-        if (mounted) {
+        if (mounted) { 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Carnet créé avec succès')),
           );
@@ -129,7 +129,7 @@ class CreateTripPageState extends State<CreateTripPage> {
           child: Column(
             children: [
               TextFormField(
-                decoration: InputDecoration(labelText: 'Titre'),
+                decoration: InputDecoration(labelText: 'Titre du voyage'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez entrer un titre';

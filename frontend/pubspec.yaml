@@ -39,6 +39,8 @@ dependencies:
   # Google Maps pour l'affichage des cartes
   google_maps_flutter: ^2.2.0
 
+  # Utilisation SVG
+  flutter_svg: ^2.0.0
 
   #interopérabilités 
   js: ^0.6.7
@@ -54,3 +56,5 @@ flutter:
   uses-material-design: true
   assets:
     - assets/google_logo.png
+    - assets/logo_nomadnotes.png
+    - assets/icons/Component/

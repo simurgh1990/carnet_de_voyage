@@ -11,23 +11,23 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class RegisterScreenState extends State<RegisterScreen> {
-  final _nameController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirestoreService _firestoreService = FirestoreService(); // Instance du service Firestore
+  final FirestoreService _firestoreService = FirestoreService();
 
-  // Méthode pour gérer l'inscription de l'utilisateur
   Future<void> _register() async {
+    final String firstName = _firstNameController.text.trim();
+    final String lastName = _lastNameController.text.trim();
     final String email = _emailController.text.trim();
     final String password = _passwordController.text.trim();
     final String confirmPassword = _confirmPasswordController.text.trim();
-    final String name = _nameController.text.trim();
 
-    // Vérification que les mots de passe correspondent
     if (password != confirmPassword) {
-      if (!mounted) return; // Vérifie si le widget est monté avant d'utiliser `context`
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Les mots de passe ne correspondent pas')),
       );
@@ -35,28 +35,22 @@ class RegisterScreenState extends State<RegisterScreen> {
     }
 
     try {
-      // Inscription de l'utilisateur avec Firebase
       await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      // Ajoute les données de l'utilisateur dans Firestore
-      await _firestoreService.addUserData(name);
+      await _firestoreService.addUserData(firstName, lastName);
 
-      // Inscription réussie
-      if (!mounted) return; // Vérifie si le widget est monté avant d'utiliser `context`
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Inscription réussie')),
       );
 
-      // Redirection vers la page principale après l'inscription
-      context.go('/'); // Redirige vers la page d'accueil
-
+      context.go('/');
     } on FirebaseAuthException catch (e) {
-      if (!mounted) return; // Vérifie si le widget est monté avant d'utiliser `context`
+      if (!mounted) return;
 
-      // Gérer les codes d'erreurs de Firebase spécifiques
       String errorMessage;
       switch (e.code) {
         case 'email-already-in-use':
@@ -68,20 +62,14 @@ class RegisterScreenState extends State<RegisterScreen> {
         case 'weak-password':
           errorMessage = 'Le mot de passe est trop faible. Il doit contenir au moins 6 caractères.';
           break;
-        case 'operation-not-allowed':
-          errorMessage = 'L\'inscription avec un e-mail/mot de passe est désactivée.';
-          break;
         default:
           errorMessage = e.message ?? 'Une erreur inconnue est survenue.';
       }
 
-      // Affiche le message d'erreur spécifique
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(errorMessage)),
       );
-
     } catch (e) {
-      // Capture les autres erreurs potentielles
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erreur inconnue : $e')),
@@ -89,83 +77,130 @@ class RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
-  // Méthode pour gérer la réinitialisation du mot de passe
-  Future<void> _resetPassword() async {
-    final email = _emailController.text.trim();
-    if (email.isEmpty) {
-      if (!mounted) return; // Vérifie si le widget est monté avant d'utiliser `context`
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Veuillez entrer un e-mail valide.')),
-      );
-      return;
-    }
-
-    try {
-      await _auth.sendPasswordResetEmail(email: email);
-      if (!mounted) return; // Vérifie si le widget est monté avant d'utiliser `context`
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('E-mail de réinitialisation envoyé.')),
-      );
-    } catch (e) {
-      if (!mounted) return; // Vérifie si le widget est monté avant d'utiliser `context`
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erreur lors de l\'envoi de l\'e-mail de réinitialisation : $e')),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Inscription'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _nameController,
-              decoration: const InputDecoration(labelText: 'Nom'),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
-              keyboardType: TextInputType.emailAddress,
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _passwordController,
-              decoration: const InputDecoration(labelText: 'Mot de passe'),
-              obscureText: true,
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _confirmPasswordController,
-              decoration: const InputDecoration(labelText: 'Confirmez le mot de passe'),
-              obscureText: true,
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: _register, // Appel à la fonction d'inscription
-              child: const Text("S'inscrire"),
-            ),
-            const SizedBox(height: 12),
-            TextButton(
-              onPressed: _resetPassword, // Ajout de la fonctionnalité de mot de passe oublié
-              child: const Text("Mot de passe oublié ?"),
-            ),
-            const SizedBox(height: 12),
-            TextButton(
-              onPressed: () {
-                context.go('/login'); // Redirection vers la page de connexion
-              },
-              child: const Text("Déjà inscrit ? Connectez-vous"),
-            ),
-          ],
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment(0.71, -0.71),
+            end: Alignment(-0.71, 0.71),
+            colors: [Color(0xFF4CAF50), Color(0xFF2196F3)],
+          ),
         ),
+        child: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(height: 50),
+                // Logo de l'application
+                Image.asset(
+                  'assets/logo_nomadnotes.png',
+                  width: 300,
+                  height: 239,
+                ),
+                const SizedBox(height: 30),
+                Text(
+                  'Inscription',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+                ),
+                const SizedBox(height: 20),
+                // Formulaire d'inscription
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: 400), // Largeur max pour champs de texte
+                    child: Column(
+                      children: [
+                        // Prénom
+                        _buildTextField(controller: _firstNameController, label: 'Prénom'),
+                        const SizedBox(height: 16),
+
+                        // Nom
+                        _buildTextField(controller: _lastNameController, label: 'Nom'),
+                        const SizedBox(height: 16),
+
+                        // Email
+                        _buildTextField(controller: _emailController, label: 'Email', icon: Icons.email),
+                        const SizedBox(height: 16),
+
+                        // Mot de passe
+                        _buildTextField(
+                          controller: _passwordController,
+                          label: 'Mot de passe',
+                          icon: Icons.lock,
+                          obscureText: true,
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Confirmer le mot de passe
+                        _buildTextField(
+                          controller: _confirmPasswordController,
+                          label: 'Confirmez le mot de passe',
+                          icon: Icons.lock,
+                          obscureText: true,
+                        ),
+                        const SizedBox(height: 24),
+
+                        // Bouton S'inscrire
+                        ElevatedButton(
+                          onPressed: _register,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF2196F3),
+                            minimumSize: Size(300, 45),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                          ),
+                          child: const Text(
+                            'S\'inscrire',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Texte et bouton pour redirection vers la connexion
+                        TextButton(
+                          onPressed: () => context.go('/login'),
+                          child: const Text(
+                            'Déjà inscrit ? Connectez-vous',
+                            style: TextStyle(color: Color(0xFF212121)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    IconData? icon,
+    bool obscureText = false,
+  }) {
+    return TextField(
+      controller: controller,
+      obscureText: obscureText,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(
+          color: Colors.black.withOpacity(0.5),
+          fontSize: 14,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5),
+        ),
+        prefixIcon: icon != null ? Icon(icon, color: Colors.black.withOpacity(0.5)) : null,
+        filled: true,
+        fillColor: Color(0xFFFAFAFA),
       ),
     );
   }

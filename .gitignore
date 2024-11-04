@@ -67,5 +67,4 @@ backend/firebaseAdmin/firebase-adminsdk-carnet_de_voyage.json
 *.bak
 *.old
 
-# Ignorer le fichier .env
-.env
+node_modules

@@ -8,13 +8,14 @@ class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final Logger _logger = Logger(); // Initialise le logger
 
-  Future<void> addUserData(String name) async {
+  Future<void> addUserData(String name,String firstName) async {
     User? user = _auth.currentUser;
 
     if (user != null) {
       try {
         await _firestore.collection('users').doc(user.uid).set({
           'name': name,
+          'firstname': firstName,
           'email': user.email,
           'createdAt': FieldValue.serverTimestamp(),
         });
